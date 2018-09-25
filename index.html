@@ -1,0 +1,90 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <title>LeadSuccess API Samples</title>
+
+    <!-- LSAPISampleCDV references -->
+    <meta name="viewport" content="user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0, width=device-width, target-densitydpi=device-dpi" />
+    <meta name="msapplication-tap-highlight" content="no" />
+    <!--
+        Customize the content security policy in the meta tag below as needed. Add 'unsafe-inline' to default-src to enable inline JavaScript.
+        For details, see http://go.microsoft.com/fwlink/?LinkID=617521
+    -->
+    <meta http-equiv="Content-Security-Policy" content="default-src 'self' data: gap: https://ssl.gstatic.com 'unsafe-eval' 'unsafe-inline'; style-src 'self' 'unsafe-inline'; media-src 'self' data: *; connect-src blob: *">
+
+    <!-- CSS references -->
+    <link rel="stylesheet" href="css/index.css" />
+
+    <!-- project scripts -->
+    <script type="text/javascript" src="scripts/promise.js"></script>
+    <script type="text/javascript" src="scripts/xhr.js"></script>
+    <script type="text/javascript" src="scripts/odataview.js"></script>
+    <script type="text/javascript" src="scripts/index.js"></script>
+</head>
+<body>
+<h1>LeadSuccess API Samples</h1>
+<div class="login-box">
+    <label class="edit-label">
+        Server-name:
+        <input id="servername" class="edit-box" type="text" placeholder="Enter server-name" />
+    </label>
+    <label class="edit-label">
+        API-name:
+        <input id="apiname" class="edit-box" type="text" placeholder="Enter api-name"/>
+    </label>
+    <label class="edit-label">
+        User:
+        <input id="user" class="edit-box" type="text" placeholder="Enter user"/>
+    </label>
+    <label class="edit-label">
+        Password:
+        <input id="password" class="edit-box" type="password" placeholder="Enter password"/>
+    </label>
+    <button id="login" class="push-button">Login</button>
+</div>
+<div class="logoff-box">
+    <button id="logoff" class="push-button">Logoff</button>
+</div>
+<div class="select-box">
+    <select id="viewname"></select>
+</div>
+<div class="result-box"></div>
+<div class="contact-box">
+    <div class="contact-record">
+        <label class="edit-label">
+            First name:
+            <input id="Fristname" class="edit-box" type="text" />
+        </label>
+        <label class="edit-label">
+            Last name:
+            <input id="LastName" class="edit-box" type="text" />
+        </label>
+        <label class="edit-label">
+            Company:
+            <input id="CompanyName" class="edit-box" type="text" />
+        </label>
+        <label class="edit-label">
+            Email:
+            <input id="Email" class="edit-box" type="text" />
+        </label>
+        <button id="insertContact" class="push-button">Insert</button>
+    </div>
+    <div class="barcode-record">
+        <label class="edit-label">
+            1d-Barcode:
+            <input id="Request_Barcode" class="edit-box" type="text" />
+        </label>
+        <button id="insertBarcode" class="push-button">Insert</button>
+    </div>
+    <div class="qrcode-record">
+        <label class="edit-label">
+            2d-Barcode:
+            <textarea id="Barcode2" class="edit-box"></textarea>
+        </label>
+        <button id="insertQrcode" class="push-button">Insert</button>
+    </div>
+</div>
+<div class="error-box"></div>
+</body>
+</html>
