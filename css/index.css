@@ -6,7 +6,7 @@
     overflow: hidden;
 }
 
-h1 {
+.head-line {
     font-weight: lighter;
     text-align: center;
     width: 100%
