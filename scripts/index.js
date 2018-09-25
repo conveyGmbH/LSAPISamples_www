@@ -213,6 +213,7 @@
                     var selectedOption = selectElement.options[selectElement.options.selectedIndex];
                     if (selectedOption.text) {
                         selectView(selectedOption.text);
+                        hideNewContact();
                     }
                 } else {
                     showNewContact();

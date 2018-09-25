@@ -55,11 +55,11 @@ select {
     border-bottom: 1px solid;
 }
 .barcode-record {
-    height: 100px;
+    height: 110px;
     border-bottom: 1px solid;
 }
 .qrcode-record {
-    height: 100px;
+    height: 160px;
     border-bottom: 1px solid;
 }
 
@@ -80,6 +80,9 @@ th {
 table, th, td {
     border: none;
 }
+th, td {
+    white-space: nowrap;
+}
 
 .edit-label {
     margin: 8px;
@@ -92,6 +95,9 @@ table, th, td {
     width: calc(100% - 30px);
     height: 24px;
     font-size: 16px;
+}
+textarea.edit-box {
+    height: 80px;
 }
 
 .push-button {
