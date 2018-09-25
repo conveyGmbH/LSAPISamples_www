@@ -400,9 +400,6 @@
                     //returns error
                     showError(getErrorMsgFromResponse(errorResponse));
                 });
-
-                insertView("LSA_Contact", {}).then(function () {
-                });
             }
         },
         insertQrcode: function(event) {
@@ -460,16 +457,12 @@
                         return null;
                     }
                 }).then(function(response) {
-                        //returns success
-                        showResults(name, response);
-                        hideNewContact();
-                    },
-                    function(errorResponse) {
-                        //returns error
-                        showError(getErrorMsgFromResponse(errorResponse));
-                    });
-
-                insertView("LSA_Contact", {}).then(function() {
+                    //returns success
+                    showResults(name, response);
+                    hideNewContact();
+                }, function(errorResponse) {
+                    //returns error
+                    showError(getErrorMsgFromResponse(errorResponse));
                 });
             }
         }
