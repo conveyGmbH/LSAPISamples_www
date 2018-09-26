@@ -45,6 +45,9 @@
                     if (typeof req.withCredentials !== "undefined") {
                         req.withCredentials = true;
                     }
+                },
+                headers: {
+                    "Authorization": "Basic " + btoa(odata._user + ":" + odata._password)
                 }
             };
             var ret = xhr(options);
@@ -66,6 +69,9 @@
                     if (typeof req.withCredentials !== "undefined") {
                         req.withCredentials = true;
                     }
+                },
+                headers: {
+                    "Authorization": "Basic " + btoa(odata._user + ":" + odata._password)
                 }
             };
             var ret = xhr(options);
@@ -89,6 +95,7 @@
                     }
                 },
                 headers: {
+                    "Authorization": "Basic " + btoa(odata._user + ":" + odata._password),
                     "Accept": "application/json",
                     "Content-Type": "application/json"
                 }

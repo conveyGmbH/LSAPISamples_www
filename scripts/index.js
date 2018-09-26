@@ -282,12 +282,12 @@
                 //returns success
                 showResults(name, response);
                 return Promise.resolve(response);
-            },
-            function(errorResponse) {
-                //returns error
-                showError(getErrorMsgFromResponse(errorResponse));
-                return Promise.reject(errorResponse);
-            });
+        },
+        function(errorResponse) {
+            //returns error
+            showError(getErrorMsgFromResponse(errorResponse));
+            return Promise.reject(errorResponse);
+        });
     }
 
     function insertView(name, newRecord) {
@@ -297,11 +297,11 @@
                 //returns success
                 showResults(name, response);
                 return Promise.resolve(response);
-            }, function(errorResponse) {
-                //returns error
-                showError(getErrorMsgFromResponse(errorResponse));
-                return Promise.reject(errorResponse);
-            });
+        }, function(errorResponse) {
+            //returns error
+            showError(getErrorMsgFromResponse(errorResponse));
+            return Promise.reject(errorResponse);
+        });
     }
 
     var clickHandler = {
