@@ -229,7 +229,7 @@
         }
     }
 
-    function hideScenarioSelect() {
+    function showLoginBox() {
         var loginBox = document.querySelector(".login-box");
         if (loginBox && loginBox.style) {
             loginBox.style.display = "block";
@@ -320,8 +320,13 @@
                 // select from employee view
                 selectView("LSA_Employee").then(function() {
                     showScenarioSelect();
-                }, function() {
-                    hideScenarioSelect();
+                    var selectBox = document.querySelector(".select-box");
+                    if (selectBox) {
+                        var selectElement = selectBox.querySelector("#viewname");
+                        if (selectElement && selectElement.options) {
+                            selectElement.options.selectedIndex = 0;
+                        }
+                    }
                 });
             }
         },
@@ -329,7 +334,7 @@
             showError("");
             // reset odata login information
             OData.init(null, null, null, null);
-            hideScenarioSelect();
+            showLoginBox();
         },
         insertContact: function(event) {
             showError("");
@@ -358,7 +363,8 @@
                 });
             }
         },
-        insertBarcode: function(event) {
+        insertBarcode: function (event) {
+            var error;
             showError("");
             // get new record
             var contactRecord = document.querySelector(".barcode-record");
@@ -386,12 +392,12 @@
                             var barcodeView = new OData.ViewData("LSA_ImportBarcodeScan");
                             return barcodeView.insert(newBarcodeRecord);
                         } else {
-                            showError("Error: No data returned from insert contact!");
-                            return null;
+                            error = new Error("Error: No data returned from insert LSA_Contact!");
+                            return Promise.reject(error);
                         }
                     } catch (e) {
-                        showError("Error: exception occurred while parsing response! " + e.toString());
-                        return null;
+                        error = new Error("Error: exception occurred while parsing response! " + e.toString());
+                        return Promise.reject(error);
                     }
                 }).then(function(response) {
                     //returns success
@@ -404,25 +410,32 @@
                             }
                             return OData.call("PRC_GetRecognizedContact", params);
                         } else {
-                            showError("Error: No data returned from insert contact!");
-                            return null;
+                            error = new Error("Error: No data returned from insert LSA_ImportBarcodeScan!");
+                            return Promise.reject(error);
                         }
                     } catch (e) {
-                        showError("Error: exception occurred while parsing response! " + e.toString());
-                        return null;
+                        error = new Error("Error: exception occurred while parsing response! " + e.toString());
+                        return Promise.reject(error);
                     }
                 }).then(function(response) {
-                        //returns success
-                        showResults(name, response);
-                        hideNewContact();
-                    },
-                    function(errorResponse) {
-                        //returns error
-                        showError(getErrorMsgFromResponse(errorResponse));
-                    });
+                    //returns success
+                    showResults(name, response);
+                    hideNewContact();
+                    var selectBox = document.querySelector(".select-box");
+                    if (selectBox) {
+                        var selectElement = selectBox.querySelector("#viewname");
+                        if (selectElement && selectElement.options) {
+                            selectElement.options.selectedIndex = 0;
+                        }
+                    }
+                }, function(errorResponse) {
+                    //returns error
+                    showError(getErrorMsgFromResponse(errorResponse));
+                });
             }
         },
         insertQrcode: function(event) {
+            var error;
             showError("");
             // get new record
             var contactRecord = document.querySelector(".qrcode-record");
@@ -451,12 +464,12 @@
                             var barcodeView = new OData.ViewData("LSA_ImportCardscan");
                             return barcodeView.insert(newBarcodeRecord);
                         } else {
-                            showError("Error: No data returned from insert contact!");
-                            return null;
+                            error = new Error("Error: No data returned from insert LSA_Contact!");
+                            return Promise.reject(error);
                         }
                     } catch (e) {
-                        showError("Error: exception occurred while parsing response! " + e.toString());
-                        return null;
+                        error = new Error("Error: exception occurred while parsing response! " + e.toString());
+                        return Promise.reject(error);
                     }
                 }).then(function(response) {
                     //returns success
@@ -469,22 +482,28 @@
                             }
                             return OData.call("PRC_GetRecognizedContact", params);
                         } else {
-                            showError("Error: No data returned from insert contact!");
-                            return null;
+                            error = new Error("Error: No data returned from insert LSA_ImportCardscan!");
+                            return Promise.reject(error);
                         }
                     } catch (e) {
-                        showError("Error: exception occurred while parsing response! " + e.toString());
-                        return null;
+                        error = new Error("Error: exception occurred while parsing response! " + e.toString());
+                        return Promise.reject(error);
                     }
                 }).then(function(response) {
-                        //returns success
-                        showResults(name, response);
-                        hideNewContact();
-                    },
-                    function(errorResponse) {
-                        //returns error
-                        showError(getErrorMsgFromResponse(errorResponse));
-                    });
+                    //returns success
+                    showResults(name, response);
+                    hideNewContact();
+                    var selectBox = document.querySelector(".select-box");
+                    if (selectBox) {
+                        var selectElement = selectBox.querySelector("#viewname");
+                        if (selectElement && selectElement.options) {
+                            selectElement.options.selectedIndex = 0;
+                        }
+                    }
+                }, function(errorResponse) {
+                    //returns error
+                    showError(getErrorMsgFromResponse(errorResponse));
+                });
             }
         }
     };
