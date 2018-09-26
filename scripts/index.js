@@ -1,11 +1,14 @@
-(function () {
+(function() {
     "use strict";
 
     var globalObject =
-        typeof window !== 'undefined' ? window :
-        typeof self !== 'undefined' ? self :
-        typeof global !== 'undefined' ? global :
-        {};
+        typeof window !== 'undefined'
+            ? window
+            : typeof self !== 'undefined'
+            ? self
+            : typeof global !== 'undefined'
+            ? global
+            : {};
 
     function getuuid() {
         var chars = '0123456789abcdef'.split('');
@@ -33,7 +36,7 @@
         return null;
     }
 
-    function getErrorMsgFromResponse (errorResponse) {
+    function getErrorMsgFromResponse(errorResponse) {
         var errorMsg = "";
         if (errorResponse) {
             if (typeof errorResponse === "string") {
@@ -82,10 +85,14 @@
                         }
                     }
                     if (data.code || data.errno || data.hostname || data.syscall) {
-                        errorMsg += "\r\nhostname: " + data.hostname +
-                            "\r\nsyscall: " + data.syscall +
-                            "\r\ncode: " + data.code +
-                            "\r\nerrno: " + data.errno;
+                        errorMsg += "\r\nhostname: " +
+                            data.hostname +
+                            "\r\nsyscall: " +
+                            data.syscall +
+                            "\r\ncode: " +
+                            data.code +
+                            "\r\nerrno: " +
+                            data.errno;
                     }
                 }
             }
@@ -135,7 +142,7 @@
                             if (!i) {
                                 innerHtml += "<thead><tr>";
                                 for (col in row) {
-                                    if (row.hasOwnProperty(col) && col.substr(0,2) !== "__") {
+                                    if (row.hasOwnProperty(col) && col.substr(0, 2) !== "__") {
                                         innerHtml += "<th>" + col + "</th>";
                                     }
                                 }
@@ -205,10 +212,10 @@
                 for (var i = 0; i < viewnames.length; i++) {
                     var option = document.createElement("option");
                     option.text = viewnames[i];
-                    selectElement.options.add(option); 
+                    selectElement.options.add(option);
                 }
             }
-            selectElement.onchange = function (event) {
+            selectElement.onchange = function(event) {
                 if (selectElement.options.selectedIndex < selectElement.options.length - 1) {
                     var selectedOption = selectElement.options[selectElement.options.selectedIndex];
                     if (selectedOption.text) {
@@ -248,9 +255,14 @@
         }
         var contactBox = document.querySelector(".contact-box");
         if (contactBox && contactBox.style) {
+            var editBoxes = contactBox.querySelectorAll(".edit-box");
+            for (var i = 0; i < editBoxes.length; i++) {
+                editBoxes[i].value = "";
+            }
             contactBox.style.display = "block";
         }
     }
+
     function hideNewContact() {
         var contactBox = document.querySelector(".contact-box");
         if (contactBox && contactBox.style) {
@@ -266,30 +278,34 @@
             var langId = 1033;
             filterString = "LanguageSpecID%20eq%20" + langId;
         }
-        return dataView.select(filterString).then(function (response) {
+        return dataView.select(filterString).then(function(response) {
                 //returns success
                 showResults(name, response);
+                return Promise.resolve(response);
             },
-            function (errorResponse) {
+            function(errorResponse) {
                 //returns error
                 showError(getErrorMsgFromResponse(errorResponse));
+                return Promise.reject(errorResponse);
             });
     }
 
     function insertView(name, newRecord) {
         var dataView = new OData.ViewData(name);
 
-        return dataView.insert(newRecord).then(function (response) {
-            //returns success
-            showResults(name, response);
-        }, function (errorResponse) {
-            //returns error
-            showError(getErrorMsgFromResponse(errorResponse));
-        });
+        return dataView.insert(newRecord).then(function(response) {
+                //returns success
+                showResults(name, response);
+                return Promise.resolve(response);
+            }, function(errorResponse) {
+                //returns error
+                showError(getErrorMsgFromResponse(errorResponse));
+                return Promise.reject(errorResponse);
+            });
     }
 
     var clickHandler = {
-        login: function (event) {
+        login: function(event) {
             showError("");
             var parent = event.currentTarget && event.currentTarget.parentElement;
             var servername = getControlValue(parent, "servername");
@@ -302,8 +318,10 @@
                 OData.init(servername, apiname, user, password);
 
                 // select from employee view
-                selectView("LSA_Employee").then(function () {
+                selectView("LSA_Employee").then(function() {
                     showScenarioSelect();
+                }, function() {
+                    hideScenarioSelect();
                 });
             }
         },
@@ -313,7 +331,7 @@
             OData.init(null, null, null, null);
             hideScenarioSelect();
         },
-        insertContact: function (event) {
+        insertContact: function(event) {
             showError("");
             // get new record
             var contactRecord = document.querySelector(".contact-record");
@@ -340,7 +358,7 @@
                 });
             }
         },
-        insertBarcode: function (event) {
+        insertBarcode: function(event) {
             showError("");
             // get new record
             var contactRecord = document.querySelector(".barcode-record");
@@ -351,9 +369,9 @@
                     EventID: eventId,
                     Incomplete: 1,
                     HostName: getuuid()
-            };
+                };
                 var contactView = new OData.ViewData("LSA_Contact");
-                contactView.insert(newContactRecord).then(function (response) {
+                contactView.insert(newContactRecord).then(function(response) {
                     //returns success
                     try {
                         var json = response && JSON.parse(response.responseText);
@@ -375,7 +393,7 @@
                         showError("Error: exception occurred while parsing response! " + e.toString());
                         return null;
                     }
-                }).then(function (response) {
+                }).then(function(response) {
                     //returns success
                     try {
                         var json = response && JSON.parse(response.responseText);
@@ -393,14 +411,15 @@
                         showError("Error: exception occurred while parsing response! " + e.toString());
                         return null;
                     }
-                }).then(function (response) {
-                    //returns success
-                    showResults(name, response);
-                    hideNewContact();
-                }, function (errorResponse) {
-                    //returns error
-                    showError(getErrorMsgFromResponse(errorResponse));
-                });
+                }).then(function(response) {
+                        //returns success
+                        showResults(name, response);
+                        hideNewContact();
+                    },
+                    function(errorResponse) {
+                        //returns error
+                        showError(getErrorMsgFromResponse(errorResponse));
+                    });
             }
         },
         insertQrcode: function(event) {
@@ -458,25 +477,26 @@
                         return null;
                     }
                 }).then(function(response) {
-                    //returns success
-                    showResults(name, response);
-                    hideNewContact();
-                }, function(errorResponse) {
-                    //returns error
-                    showError(getErrorMsgFromResponse(errorResponse));
-                });
+                        //returns success
+                        showResults(name, response);
+                        hideNewContact();
+                    },
+                    function(errorResponse) {
+                        //returns error
+                        showError(getErrorMsgFromResponse(errorResponse));
+                    });
             }
         }
     };
 
 
-    var ready = function () {
+    var ready = function() {
         var buttons = document.querySelectorAll("button.push-button");
         for (var i = 0; i < buttons.length; i++) {
             var name = buttons[i].id;
             buttons[i].onclick = clickHandler[name];
         }
     };
-    globalObject.onload = setTimeout(ready,0);
+    globalObject.onload = setTimeout(ready, 0);
 
 }());

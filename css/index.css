@@ -42,9 +42,9 @@ select {
 .contact-box {
     display: none;
     position: absolute;
-    top: 128px;
+    top: 148px;
     width: calc(100% - 16px);
-    height: calc(100% - 200px);
+    height: calc(100% - 210px);
     background-color: #f0f0f0;
     overflow-x: hidden;
     overflow-y: auto;
@@ -66,9 +66,9 @@ select {
 .result-box {
     display: none;
     position: absolute;
-    top: 128px;
+    top: 148px;
     width: calc(100% - 16px);
-    height: calc(100% - 200px);
+    height: calc(100% - 210px);
     background-color: #f0f0f0;
     overflow: auto;
 }
