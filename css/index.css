@@ -9,7 +9,9 @@
 .head-line {
     font-weight: lighter;
     text-align: center;
-    width: 100%
+    width: 100%;
+    margin: 0;
+    min-width: 280px;
 }
 
 .login-box {
@@ -32,6 +34,8 @@
 
 .select-box {
     display: none;
+    position: absolute;
+    top: 116px;
     width: 200px;
 }
 
@@ -62,7 +66,10 @@ select {
     height: 160px;
     border-bottom: 1px solid;
 }
-
+.bcard-record {
+    height: 400px;
+    border-bottom: 1px solid;
+}
 .result-box {
     display: none;
     position: absolute;
@@ -96,6 +103,11 @@ th, td {
     height: 24px;
     font-size: 16px;
 }
+img.edit-box {
+    max-width: 480px;
+    height: auto
+}
+
 textarea.edit-box {
     height: 80px;
 }

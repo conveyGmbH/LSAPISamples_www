@@ -26,6 +26,60 @@
         return uuid.join('');
     }
 
+    var imgSrcPrefix = "data:image/jpeg;base64,";
+
+    function resizeImageBase64(strBase64, contentType, maxSize, quality, minRatio) {
+        return new Promise(function (complete, error) {
+            var imageData = "data:" + contentType + ";base64," + strBase64;
+            var image = new Image();
+            image.onload = function () {
+                var ratio = Math.min(maxSize / this.width, maxSize / this.height);
+                if (ratio < 1) {
+                    if (minRatio) {
+                        var exp = Math.floor(Math.log(1 / ratio) / Math.LN2);
+                        ratio = 1 / (2 ^ exp);
+                        if (ratio < minRatio) {
+                            ratio = minRatio;
+                        }
+                    }
+                    var imageWidth = ratio * this.width;
+                    var imageHeight = ratio * this.height;
+                    var canvas = document.createElement('canvas');
+
+                    canvas.width = imageWidth;
+                    canvas.height = imageHeight;
+
+                    var ctx = canvas.getContext("2d");
+                    ctx.drawImage(this, 0, 0, imageWidth, imageHeight);
+
+                    // The resized file ready for upload
+                    var finalFile;
+                    if (contentType === "image/jpeg" && quality > 0 && quality <= 100) {
+                        finalFile = canvas.toDataURL(contentType, quality / 100);
+                    } else {
+                        finalFile = canvas.toDataURL(contentType);
+                    }
+
+                    // Remove the prefix such as "data:" + contentType + ";base64," , in order to meet the Cordova API.
+                    var arr = finalFile.split(",");
+                    var newStr = finalFile.substr(arr[0].length + 1);
+                    complete({
+                        data: newStr,
+                        width: imageWidth,
+                        height: imageHeight
+                    });
+                } else {
+                    complete({
+                        data: null,
+                        width: this.width,
+                        height: this.height
+                    });
+                }
+            };
+            image.src = imageData;
+        });
+    }
+
     function getControlValue(element, id) {
         if (element) {
             var input = element.querySelector("#" + id);
@@ -215,17 +269,6 @@
                     selectElement.options.add(option);
                 }
             }
-            selectElement.onchange = function(event) {
-                if (selectElement.options.selectedIndex < selectElement.options.length - 1) {
-                    var selectedOption = selectElement.options[selectElement.options.selectedIndex];
-                    if (selectedOption.text) {
-                        selectView(selectedOption.text);
-                        hideNewContact();
-                    }
-                } else {
-                    showNewContact();
-                }
-            }
         }
     }
 
@@ -246,6 +289,10 @@
         if (selectBox && selectBox.style) {
             selectBox.style.display = "none";
         }
+        var contactBox = document.querySelector(".contact-box");
+        if (contactBox && contactBox.style) {
+            contactBox.style.display = "none";
+        }
     }
 
     function showNewContact() {
@@ -257,7 +304,12 @@
         if (contactBox && contactBox.style) {
             var editBoxes = contactBox.querySelectorAll(".edit-box");
             for (var i = 0; i < editBoxes.length; i++) {
-                editBoxes[i].value = "";
+                if (editBoxes[i].value) {
+                    editBoxes[i].value = "";
+                }
+                if (editBoxes[i].src) {
+                    editBoxes[i].src = "";
+                }
             }
             contactBox.style.display = "block";
         }
@@ -302,6 +354,40 @@
             showError(getErrorMsgFromResponse(errorResponse));
             return Promise.reject(errorResponse);
         });
+    }
+
+    var changeHandler = {
+        viewname: function (event) {
+            var selectElement = event.target;
+            if (selectElement.options.selectedIndex < selectElement.options.length - 1) {
+                var selectedOption = selectElement.options[selectElement.options.selectedIndex];
+                if (selectedOption.text) {
+                    selectView(selectedOption.text);
+                    hideNewContact();
+                }
+            } else {
+                showNewContact();
+            }
+        },
+        businesscard: function(event) {
+            var input = event.target;
+            var reader = new FileReader();
+            reader.onload = function () {
+                if (reader.result) {
+                    var arrayBuffer = new Uint8Array(reader.result);
+                    var encoded = globalObject.base64js && globalObject.base64js.fromByteArray(arrayBuffer);
+                    if (encoded) {
+                        var img = input.nextElementSibling;
+                        if (img && img.tagName && img.tagName.toUpperCase() === "IMG") {
+                            img.src = imgSrcPrefix + encoded;
+                        }
+                    }
+                }
+            };
+            if (input.files && input.files.length) {
+                reader.readAsArrayBuffer(input.files[0]);
+            }
+        }
     }
 
     var clickHandler = {
@@ -369,7 +455,6 @@
             // get new record
             var contactRecord = document.querySelector(".barcode-record");
             if (contactRecord) {
-                var contactId = 0;
                 var newContactRecord = {
                     EmployeeID: employeeId,
                     EventID: eventId,
@@ -440,7 +525,6 @@
             // get new record
             var contactRecord = document.querySelector(".qrcode-record");
             if (contactRecord) {
-                var contactId = 0;
                 var newContactRecord = {
                     EmployeeID: employeeId,
                     EventID: eventId,
@@ -505,15 +589,147 @@
                     showError(getErrorMsgFromResponse(errorResponse));
                 });
             }
-        }
+        },
+        insertBusinesscard: function (event) {
+            var error;
+            showError("");
+            // get new record
+            var contactRecord = document.querySelector(".bcard-record");
+            if (contactRecord) {
+                var photoData = null, ovwData = null, width = 0, height = 0, contactId = 0;
+                var fileInput = contactRecord.querySelector("#businesscard");
+                if (fileInput &&
+                    fileInput.nextElementSibling &&
+                    fileInput.nextElementSibling.tagName &&
+                    fileInput.nextElementSibling.tagName.toUpperCase() === "IMG" &&
+                    fileInput.nextElementSibling.src &&
+                    fileInput.nextElementSibling.src.substr(0, imgSrcPrefix.length) === imgSrcPrefix) {
+                    photoData = fileInput.nextElementSibling.src.substr(imgSrcPrefix.length);
+                }
+                if (photoData) {
+                    resizeImageBase64(photoData, "image/jpeg", 2560, 50, 0.25).then(function (response) {
+                        width = response.width;
+                        height = response.height;
+                        if (response.data) {
+                            photoData = response.data;
+                        }
+                        return resizeImageBase64(photoData, "image/jpeg", 256, 50);
+                    }).then(function (response) {
+                        if (response.data) {
+                            ovwData = response.data;
+                        }
+                        var newContactRecord = {
+                            EmployeeID: employeeId,
+                            EventID: eventId,
+                            Incomplete: 1,
+                            HostName: getuuid()
+                        };
+                        var contactView = new OData.ViewData("LSA_Contact");
+                        return contactView.insert(newContactRecord);
+                    }).then(function (response) {
+                        //returns success
+                        try {
+                            var json = response && JSON.parse(response.responseText);
+                            if (json && json.d) {
+                                contactId = json.d.ContactID;
+                                var newCardscanRecord = {
+                                    ContactID: contactId,
+                                    Button: "OCR_TODO"
+                                };
+                                var cardscanView = new OData.ViewData("LSA_ImportCardscan");
+                                return cardscanView.insert(newCardscanRecord);
+                            } else {
+                                error = new Error("Error: No data returned from insert LSA_Contact!");
+                                return Promise.reject(error);
+                            }
+                        } catch (e) {
+                            error = new Error("Error: exception occurred while parsing response! " + e.toString());
+                            return Promise.reject(error);
+                        }
+                    }).then(function (response) {
+                        //returns success
+                        try {
+                            var json = response && JSON.parse(response.responseText);
+                            if (json && json.d) {
+                                var newDoc1CardscanRecord = {
+                                    DOC1ImportCardscanID: json.d.ImportCardscanID,
+                                    wFormat: 3,
+                                    ColorType: 11,
+                                    ulWidth: width,
+                                    ulHeight: height,
+                                    ulDpm: 0,
+                                    szOriFileNameDOC1: "Visitenkarte.jpg",
+                                    DocContentDOCCNT1: photoData,
+                                    ContentEncoding: 4096
+                                };
+                                if (ovwData) {
+                                    newDoc1CardscanRecord.OvwContentDOCCNT3 = ovwData;
+                                }
+                                var doc1CardscanView = new OData.ViewData("LSA_DOC1ImportCardscan");
+                                return doc1CardscanView.insert(newDoc1CardscanRecord);
+                            } else {
+                                error = new Error("Error: No data returned from insert LSA_ImportCardscan!");
+                                return Promise.reject(error);
+                            }
+                        } catch (e) {
+                            error = new Error("Error: exception occurred while parsing response! " + e.toString());
+                            return Promise.reject(error);
+                        }
+                    }).then(function (response) {
+                        //returns success
+                        try {
+                            var json = response && JSON.parse(response.responseText);
+                            if (json && json.d) {
+                                var params = {
+                                    p_ContactID: contactId,
+                                    p_TimeoutSec: 10
+                                }
+                                return OData.call("PRC_GetRecognizedContact", params);
+                            } else {
+                                error = new Error("Error: No data returned from insert LSA_ImportCardscan!");
+                                return Promise.reject(error);
+                            }
+                        } catch (e) {
+                            error = new Error("Error: exception occurred while parsing response! " + e.toString());
+                            return Promise.reject(error);
+                        }
+                    }).then(function (response) {
+                        //returns success
+                        showResults(name, response);
+                        hideNewContact();
+                        var selectBox = document.querySelector(".select-box");
+                        if (selectBox) {
+                            var selectElement = selectBox.querySelector("#viewname");
+                            if (selectElement && selectElement.options) {
+                                selectElement.options.selectedIndex = 0;
+                            }
+                        }
+                    }, function (errorResponse) {
+                        //returns error
+                        showError(getErrorMsgFromResponse(errorResponse));
+                    });
+                }
+            }
+        } 
     };
 
 
-    var ready = function() {
-        var buttons = document.querySelectorAll("button.push-button");
-        for (var i = 0; i < buttons.length; i++) {
-            var name = buttons[i].id;
-            buttons[i].onclick = clickHandler[name];
+    var ready = function () {
+        // now bind the handlers...
+        var i, name;
+        var elements = document.querySelectorAll("button.push-button");
+        for (i = 0; i < elements.length; i++) {
+            name = elements[i].id;
+            if (clickHandler[name]) {
+                elements[i].onclick = clickHandler[name];
+            }
+        }
+        elements = document.querySelectorAll("select, input");
+        for (i = 0; i < elements.length; i++) {
+            name = elements[i].id;
+            if (changeHandler[name]) {
+                elements[i].onchange = changeHandler[name];
+            }
         }
     };
     globalObject.onload = setTimeout(ready, 0);

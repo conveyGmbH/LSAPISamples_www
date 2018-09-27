@@ -20,6 +20,7 @@
     <script type="text/javascript" src="scripts/promise.js"></script>
     <script type="text/javascript" src="scripts/xhr.js"></script>
     <script type="text/javascript" src="scripts/odataview.js"></script>
+    <script type="text/javascript" src="scripts/base64js.min.js"></script>
     <script type="text/javascript" src="scripts/index.js"></script>
 </head>
 <body>
@@ -84,6 +85,14 @@
             <textarea id="Barcode2" class="edit-box"></textarea>
         </label>
         <button id="insertQrcode" class="push-button">Insert</button>
+    </div>
+    <div class="bcard-record">
+        <label class="edit-label">
+            Image file:
+            <input id="businesscard" class="edit-box" type='file'>
+            <img class="edit-box" src=""/>
+        </label>
+        <button id="insertBusinesscard" class="push-button">Insert</button>
     </div>
 </div>
 <div class="error-box"></div>
