@@ -106,7 +106,7 @@
     };
 
     odata.ViewData = viewData;
-    odata.call = function(name, params) {
+    odata.call = function (name, params) {
         var paramsString = "";
         for (var prop in params) {
             if (params.hasOwnProperty(prop)) {
@@ -142,7 +142,36 @@
         var ret = xhr(options);
         return ret;
     };
-
+    odata.getNextUrl = function (json) {
+        var url = "";
+        if (json && json.d) {
+            var next = json.d.__next;
+            if (next && typeof next === "string") {
+                var viewNamePos = next.lastIndexOf("/");
+                if (viewNamePos >= 0) {
+                    url = "https://" + odata._serverName +
+                        "/" + odata._apiName + next.substr(viewNamePos);
+                }
+            }
+        }
+        return url;
+    }
+    odata.selectUrl = function (url) {
+        var options = {
+            type: "GET",
+            url: url,
+            user: odata._user,
+            password: odata._password,
+            customRequestInitializer: function (req) {
+                if (typeof req.withCredentials !== "undefined") {
+                    req.withCredentials = true;
+                }
+            }
+        };
+        var ret = xhr(options);
+        return ret;
+    };
+    
     globalObject["OData"] = odata;
 
 }());

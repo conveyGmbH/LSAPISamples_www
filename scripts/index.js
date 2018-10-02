@@ -163,8 +163,10 @@
 
     var employeeId = 0;
     var eventId = 0;
+    var nextUrl = "";
 
     function showResults(name, response) {
+        nextUrl = "";
         if (response) {
             try {
                 var resultBox = document.querySelector(".result-box");
@@ -176,11 +178,12 @@
                             if (json.d.results) {
                                 // array result set
                                 results = json.d.results;
+                                nextUrl = OData.getNextUrl(json);
                             } else {
                                 // single-row result
                                 results.push(json.d);
                             }
-                        }
+                        } 
                     }
                     var innerHtml = "<h3>" + name + "</h3>";
                     if (results.length > 0) {
@@ -225,6 +228,13 @@
                 }
             } catch (e) {
                 showError("Error: exception occurred while parsing response! " + e.toString());
+            }
+        }
+        var selectBox = document.querySelector(".select-box");
+        if (selectBox) {
+            var fetchNextButton = selectBox.querySelector(".push-button");
+            if (fetchNextButton && fetchNextButton.style) {
+                fetchNextButton.style.visibility = nextUrl ? "visible" : "hidden";
             }
         }
     }
@@ -710,7 +720,21 @@
                     });
                 }
             }
-        } 
+        }, 
+        fetchNext: function (event) {
+            if (nextUrl) {
+                OData.selectUrl(nextUrl).then(function (response) {
+                    //returns success
+                    showResults(name, response);
+                    return Promise.resolve(response);
+                },
+                function (errorResponse) {
+                    //returns error
+                    showError(getErrorMsgFromResponse(errorResponse));
+                    return Promise.reject(errorResponse);
+                });
+            }
+        }
     };
 
 

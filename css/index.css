@@ -36,7 +36,7 @@
     display: none;
     position: absolute;
     top: 116px;
-    width: 200px;
+    width: 100%;
 }
 
 select {
@@ -127,4 +127,10 @@ textarea.edit-box {
     color: red;
     width: calc(100% - 128px);
     bottom: 0px;
+}
+
+#fetchNext.push-button {
+    visibility: hidden;
+    float: right;
+    margin: 0 16px 0 0;
 }
