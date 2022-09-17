@@ -742,6 +742,11 @@
         // now bind the handlers...
         var i, name;
         var elements = document.querySelectorAll("button.push-button");
+        if (!elements.length) {
+            // not yet existing, try again...
+            setTimeout(ready, 10);
+            return;
+        }
         for (i = 0; i < elements.length; i++) {
             name = elements[i].id;
             if (clickHandler[name]) {
@@ -756,6 +761,6 @@
             }
         }
     };
-    globalObject.onload = setTimeout(ready, 0);
+    globalObject.onload = setTimeout(ready, 10);
 
 }());

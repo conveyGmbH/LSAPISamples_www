@@ -137,6 +137,9 @@
                 if (typeof req.withCredentials !== "undefined") {
                     req.withCredentials = true;
                 }
+            },
+            headers: {
+                "Authorization": "Basic " + btoa(odata._user + ":" + odata._password)
             }
         };
         var ret = xhr(options);
