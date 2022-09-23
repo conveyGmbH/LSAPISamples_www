@@ -423,6 +423,9 @@
                             selectElement.options.selectedIndex = 0;
                         }
                     }
+                }, function(errorResponse) {
+                    //returns error
+                    showError(getErrorMsgFromResponse(errorResponse));
                 });
             }
         },
