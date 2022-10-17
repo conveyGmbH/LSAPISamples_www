@@ -621,8 +621,8 @@
                 }
                 if (photoData) {
                     resizeImageBase64(photoData, "image/jpeg", 2560, 50, 0.25).then(function (response) {
-                        width = response.width;
-                        height = response.height;
+                        width = Math.floor(response.width);
+                        height = Math.floor(response.height);
                         if (response.data) {
                             photoData = response.data;
                         }
