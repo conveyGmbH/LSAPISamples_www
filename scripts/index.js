@@ -254,6 +254,7 @@
         "LSA_UserInfo",
         "LSA_DOC1Employee",
         "LSA_Contact",
+		"LSA_ContactReport",
         ">> add new contact"
     ];
 
