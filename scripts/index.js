@@ -463,6 +463,40 @@
                 });
             }
         },
+        callBarcodePrc: function() {
+            var error;
+            showError("");
+            // get new record
+            var contactRecord = document.querySelector(".barcode-record");
+            if (contactRecord) {
+                var params = {
+                    p_EmployeeID: employeeId,
+                    p_TimeoutSec: 10,
+                    p_EventID: eventId,
+                    p_Incomplete: 1,
+                    p_HostName: getuuid()
+                };
+                var elements = contactRecord.querySelectorAll(".edit-box");
+                for (var i = 0; i < elements.length; i++) {
+                    params["p_" + elements[i].id] = elements[i].value;
+                }
+                return OData.call("PRC_GetContactFromBarcode", params).then(function (response) {
+                    //returns success
+                    showResults(name, response);
+                    hideNewContact();
+                    var selectBox = document.querySelector(".select-box");
+                    if (selectBox) {
+                        var selectElement = selectBox.querySelector("#viewname");
+                        if (selectElement && selectElement.options) {
+                            selectElement.options.selectedIndex = 0;
+                        }
+                    }
+                }, function (errorResponse) {
+                    //returns error
+                    showError(getErrorMsgFromResponse(errorResponse));
+                });
+            }
+        },
         insertBarcode: function (event) {
             var error;
             showError("");

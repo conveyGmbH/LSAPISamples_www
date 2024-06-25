@@ -59,7 +59,7 @@ select {
     border-bottom: 1px solid;
 }
 .barcode-record {
-    height: 110px;
+    height: 160px;
     border-bottom: 1px solid;
 }
 .qrcode-record {
@@ -119,6 +119,7 @@ textarea.edit-box {
     width: 100px;
     height: 32px;
     margin-left: calc(50% - 50px);
+    display: block;
 }
 
 .error-box {
