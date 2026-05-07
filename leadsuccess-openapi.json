@@ -1,0 +1,1411 @@
+{
+  "openapi": "3.0.3",
+  "info": {
+    "title": "LeadSuccess API",
+    "description": "The LeadSuccess API provides access to data structures and procedures on server-side via a RESTful API. It enables 3rd party developers to build customized frontend apps to the LeadSuccess System. The API is based on a subset of the OData 2.0 protocol.\n\n**Authentication:** HTTPS Basic Authentication is required for every request.\n\n**Base URL:** `https://<server-name>/<api-name>`\n\n**Notes:**\n- All parameter data must be transferred in JSON format.\n- All text data is UTF-8 encoded.\n- All date-time data is in UTC timezone.\n- OData request syntax is case sensitive.\n- Maximum result size per request is 100 rows. Use `$skiptoken` for pagination.\n- A user can only keep one transaction active at a time.",
+    "version": "1.0",
+    "contact": {
+      "url": "http://www.convey.de/"
+    }
+  },
+  "servers": [
+    {
+      "url": "https://{server-name}/{api-name}",
+      "variables": {
+        "server-name": {
+          "default": "your-server",
+          "description": "Server name provided by convey upon login"
+        },
+        "api-name": {
+          "default": "your-api",
+          "description": "API name provided by convey upon login"
+        }
+      }
+    }
+  ],
+  "security": [
+    {
+      "basicAuth": []
+    }
+  ],
+  "tags": [
+    { "name": "Metadata", "description": "Schema and metadata endpoints" },
+    { "name": "Static Master Data", "description": "Static data loaded once after app installation" },
+    { "name": "Static Application Runtime Data", "description": "Select element option lists" },
+    { "name": "Read-Only Application Runtime Data", "description": "Event and user runtime information" },
+    { "name": "Writeable Application Runtime Data", "description": "User info and profile image" },
+    { "name": "Visitor Data", "description": "Contact and lead data collected at events" },
+    { "name": "Questionnaire", "description": "Questionnaire answers linked to contacts" },
+    { "name": "CRM Export", "description": "Views for CRM data export" },
+    { "name": "Procedures", "description": "Server-side procedures for barcode and business card recognition" }
+  ],
+  "paths": {
+    "/$metadata": {
+      "get": {
+        "tags": ["Metadata"],
+        "summary": "Retrieve full API schema",
+        "description": "Returns the full OData schema metadata for all available views and relations.",
+        "responses": {
+          "200": {
+            "description": "OData metadata document (XML or JSON)"
+          }
+        }
+      }
+    },
+    "/LSA_LanguageSpecExt": {
+      "get": {
+        "tags": ["Static Master Data"],
+        "summary": "Get list of supported languages",
+        "description": "Returns all supported languages. Use `LanguageSpecExtID` as `LanguageSpecID` in other filtered views.",
+        "parameters": [
+          { "$ref": "#/components/parameters/format" },
+          { "$ref": "#/components/parameters/filter" },
+          { "$ref": "#/components/parameters/orderby" },
+          { "$ref": "#/components/parameters/skiptoken" }
+        ],
+        "responses": {
+          "200": {
+            "description": "List of supported languages",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ODataListResponse"
+                },
+                "example": {
+                  "d": {
+                    "results": [
+                      {
+                        "LanguageSpecExtID": 1,
+                        "Title": "English",
+                        "DOMCode": "en",
+                        "DefaultLanguage": 1,
+                        "ShowLanguage": "English"
+                      }
+                    ]
+                  }
+                }
+              }
+            }
+          },
+          "400": { "$ref": "#/components/responses/BadRequest" },
+          "500": { "$ref": "#/components/responses/InternalServerError" }
+        }
+      }
+    },
+    "/LSA_LGNTINITLanguage": {
+      "get": {
+        "tags": ["Static Application Runtime Data"],
+        "summary": "Get language select options (translated)",
+        "description": "Returns language-specific entries for a language select control. Filter by `LanguageSpecID`.",
+        "parameters": [
+          { "$ref": "#/components/parameters/format" },
+          { "$ref": "#/components/parameters/filter" },
+          { "$ref": "#/components/parameters/orderby" },
+          { "$ref": "#/components/parameters/skiptoken" }
+        ],
+        "responses": {
+          "200": {
+            "description": "List of language select options",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ODataListResponse" }
+              }
+            }
+          },
+          "400": { "$ref": "#/components/responses/BadRequest" },
+          "500": { "$ref": "#/components/responses/InternalServerError" }
+        }
+      }
+    },
+    "/LSA_LGNTINITCountry": {
+      "get": {
+        "tags": ["Static Application Runtime Data"],
+        "summary": "Get country select options (translated)",
+        "description": "Returns language-specific country entries for a country select control. Filter by `LanguageSpecID`.",
+        "parameters": [
+          { "$ref": "#/components/parameters/format" },
+          { "$ref": "#/components/parameters/filter" },
+          { "$ref": "#/components/parameters/orderby" },
+          { "$ref": "#/components/parameters/skiptoken" }
+        ],
+        "responses": {
+          "200": {
+            "description": "List of country select options",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ODataListResponse" }
+              }
+            }
+          },
+          "400": { "$ref": "#/components/responses/BadRequest" },
+          "500": { "$ref": "#/components/responses/InternalServerError" }
+        }
+      }
+    },
+    "/LSA_LGNTINITAddress": {
+      "get": {
+        "tags": ["Static Application Runtime Data"],
+        "summary": "Get form-of-address select options (translated)",
+        "description": "Returns language-specific entries for a form-of-address select control. Filter by `LanguageSpecID`.",
+        "parameters": [
+          { "$ref": "#/components/parameters/format" },
+          { "$ref": "#/components/parameters/filter" },
+          { "$ref": "#/components/parameters/orderby" },
+          { "$ref": "#/components/parameters/skiptoken" }
+        ],
+        "responses": {
+          "200": {
+            "description": "List of form-of-address options",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ODataListResponse" }
+              }
+            }
+          },
+          "400": { "$ref": "#/components/responses/BadRequest" },
+          "500": { "$ref": "#/components/responses/InternalServerError" }
+        }
+      }
+    },
+    "/LSA_LGNTINITUserPresence": {
+      "get": {
+        "tags": ["Static Application Runtime Data"],
+        "summary": "Get user presence select options (translated)",
+        "description": "Returns language-specific entries for a user presence select control. Filter by `LanguageSpecID`.",
+        "parameters": [
+          { "$ref": "#/components/parameters/format" },
+          { "$ref": "#/components/parameters/filter" },
+          { "$ref": "#/components/parameters/orderby" },
+          { "$ref": "#/components/parameters/skiptoken" }
+        ],
+        "responses": {
+          "200": {
+            "description": "List of user presence options",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ODataListResponse" }
+              }
+            }
+          },
+          "400": { "$ref": "#/components/responses/BadRequest" },
+          "500": { "$ref": "#/components/responses/InternalServerError" }
+        }
+      }
+    },
+    "/LSA_LGNTINITOptionType": {
+      "get": {
+        "tags": ["Static Application Runtime Data"],
+        "summary": "Get event option type select options (translated)",
+        "description": "Returns language-specific entries for available event option types. Filter by `LanguageSpecID`.",
+        "parameters": [
+          { "$ref": "#/components/parameters/format" },
+          { "$ref": "#/components/parameters/filter" },
+          { "$ref": "#/components/parameters/orderby" },
+          { "$ref": "#/components/parameters/skiptoken" }
+        ],
+        "responses": {
+          "200": {
+            "description": "List of event option types",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ODataListResponse" }
+              }
+            }
+          },
+          "400": { "$ref": "#/components/responses/BadRequest" },
+          "500": { "$ref": "#/components/responses/InternalServerError" }
+        }
+      }
+    },
+    "/LSA_LOADEvent": {
+      "get": {
+        "tags": ["Read-Only Application Runtime Data"],
+        "summary": "Get current event information",
+        "description": "Returns information about the current event including name, dates, exhibitor address and privacy policy.",
+        "parameters": [
+          { "$ref": "#/components/parameters/format" }
+        ],
+        "responses": {
+          "200": {
+            "description": "Current event data",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "d": {
+                      "type": "object",
+                      "properties": {
+                        "results": {
+                          "type": "array",
+                          "items": { "$ref": "#/components/schemas/LOADEvent" }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": { "$ref": "#/components/responses/BadRequest" },
+          "500": { "$ref": "#/components/responses/InternalServerError" }
+        }
+      }
+    },
+    "/LSA_CREventOption": {
+      "get": {
+        "tags": ["Read-Only Application Runtime Data"],
+        "summary": "Get event options",
+        "description": "Returns available options for the current event.",
+        "parameters": [
+          { "$ref": "#/components/parameters/format" },
+          { "$ref": "#/components/parameters/filter" }
+        ],
+        "responses": {
+          "200": {
+            "description": "List of event options",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ODataListResponse" }
+              }
+            }
+          },
+          "400": { "$ref": "#/components/responses/BadRequest" },
+          "500": { "$ref": "#/components/responses/InternalServerError" }
+        }
+      }
+    },
+    "/LSA_Employee": {
+      "get": {
+        "tags": ["Read-Only Application Runtime Data"],
+        "summary": "Get current user (employee) information",
+        "description": "Returns user-related information useful for the start page of the app, including contact count and message flags.",
+        "parameters": [
+          { "$ref": "#/components/parameters/format" }
+        ],
+        "responses": {
+          "200": {
+            "description": "Employee data",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "d": {
+                      "type": "object",
+                      "properties": {
+                        "results": {
+                          "type": "array",
+                          "items": { "$ref": "#/components/schemas/Employee" }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": { "$ref": "#/components/responses/BadRequest" },
+          "500": { "$ref": "#/components/responses/InternalServerError" }
+        }
+      }
+    },
+    "/LSA_MandatoryFields": {
+      "get": {
+        "tags": ["Read-Only Application Runtime Data"],
+        "summary": "Get mandatory address fields",
+        "description": "Returns a list of fields that are mandatory for contact data entry for the current event.",
+        "parameters": [
+          { "$ref": "#/components/parameters/format" },
+          { "$ref": "#/components/parameters/filter" }
+        ],
+        "responses": {
+          "200": {
+            "description": "List of mandatory fields",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ODataListResponse" }
+              }
+            }
+          },
+          "400": { "$ref": "#/components/responses/BadRequest" },
+          "500": { "$ref": "#/components/responses/InternalServerError" }
+        }
+      }
+    },
+    "/LSA_LineAnswerData": {
+      "get": {
+        "tags": ["Read-Only Application Runtime Data"],
+        "summary": "Get questionnaire questions and answer options for a contact",
+        "description": "Returns the list of questions and answer options for the questionnaire related to a specific contact. Use filter: `$filter=(ContactID eq <id>)&$orderby=(SortIndex)`",
+        "parameters": [
+          { "$ref": "#/components/parameters/format" },
+          { "$ref": "#/components/parameters/filter" },
+          { "$ref": "#/components/parameters/orderby" }
+        ],
+        "responses": {
+          "200": {
+            "description": "Questionnaire lines with questions and answers",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ODataListResponse" }
+              }
+            }
+          },
+          "400": { "$ref": "#/components/responses/BadRequest" },
+          "404": { "$ref": "#/components/responses/NotFound" },
+          "500": { "$ref": "#/components/responses/InternalServerError" }
+        }
+      }
+    },
+    "/LSA_UserInfo": {
+      "get": {
+        "tags": ["Writeable Application Runtime Data"],
+        "summary": "Get user info and messages",
+        "description": "Retrieves current user information including presence status and messages.",
+        "parameters": [
+          { "$ref": "#/components/parameters/format" }
+        ],
+        "responses": {
+          "200": {
+            "description": "User info data",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ODataListResponse" }
+              }
+            }
+          },
+          "400": { "$ref": "#/components/responses/BadRequest" },
+          "500": { "$ref": "#/components/responses/InternalServerError" }
+        }
+      }
+    },
+    "/LSA_UserInfo({UserInfoID})": {
+      "put": {
+        "tags": ["Writeable Application Runtime Data"],
+        "summary": "Update user info",
+        "description": "Updates user information such as presence status, personal data and messages.",
+        "parameters": [
+          {
+            "name": "UserInfoID",
+            "in": "path",
+            "required": true,
+            "description": "Primary key of the user info record (1:1 reference to EmployeeID)",
+            "schema": { "type": "integer" }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": { "$ref": "#/components/schemas/UserInfoInput" }
+            }
+          }
+        },
+        "responses": {
+          "200": { "description": "Update successful" },
+          "400": { "$ref": "#/components/responses/BadRequest" },
+          "404": { "$ref": "#/components/responses/NotFound" },
+          "500": { "$ref": "#/components/responses/InternalServerError" }
+        }
+      }
+    },
+    "/LSA_DOC1Employee": {
+      "get": {
+        "tags": ["Writeable Application Runtime Data"],
+        "summary": "Get user profile image",
+        "description": "Retrieves the profile image of the current user as base64 encoded data.",
+        "parameters": [
+          { "$ref": "#/components/parameters/format" }
+        ],
+        "responses": {
+          "200": {
+            "description": "User image data",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ODataListResponse" }
+              }
+            }
+          },
+          "400": { "$ref": "#/components/responses/BadRequest" },
+          "500": { "$ref": "#/components/responses/InternalServerError" }
+        }
+      },
+      "post": {
+        "tags": ["Writeable Application Runtime Data"],
+        "summary": "Insert user profile image",
+        "description": "Inserts a new profile image for the current user.",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": { "$ref": "#/components/schemas/ImageDocumentInput" }
+            }
+          }
+        },
+        "responses": {
+          "201": { "description": "Image inserted successfully" },
+          "400": { "$ref": "#/components/responses/BadRequest" },
+          "500": { "$ref": "#/components/responses/InternalServerError" }
+        }
+      }
+    },
+    "/LSA_DOC1Employee({DOC1EmployeeID})": {
+      "put": {
+        "tags": ["Writeable Application Runtime Data"],
+        "summary": "Update user profile image",
+        "parameters": [
+          {
+            "name": "DOC1EmployeeID",
+            "in": "path",
+            "required": true,
+            "description": "Primary key (1:1 reference to EmployeeID)",
+            "schema": { "type": "integer" }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": { "$ref": "#/components/schemas/ImageDocumentInput" }
+            }
+          }
+        },
+        "responses": {
+          "200": { "description": "Image updated successfully" },
+          "400": { "$ref": "#/components/responses/BadRequest" },
+          "404": { "$ref": "#/components/responses/NotFound" },
+          "500": { "$ref": "#/components/responses/InternalServerError" }
+        }
+      },
+      "delete": {
+        "tags": ["Writeable Application Runtime Data"],
+        "summary": "Delete user profile image",
+        "parameters": [
+          {
+            "name": "DOC1EmployeeID",
+            "in": "path",
+            "required": true,
+            "schema": { "type": "integer" }
+          }
+        ],
+        "responses": {
+          "200": { "description": "Image deleted successfully" },
+          "404": { "$ref": "#/components/responses/NotFound" },
+          "500": { "$ref": "#/components/responses/InternalServerError" }
+        }
+      }
+    },
+    "/LSA_Contact": {
+      "get": {
+        "tags": ["Visitor Data"],
+        "summary": "List visitor contacts",
+        "description": "Returns a list of visitor contacts for the current user. Maximum 100 rows per request; use `$skiptoken` for pagination.",
+        "parameters": [
+          { "$ref": "#/components/parameters/format" },
+          { "$ref": "#/components/parameters/filter" },
+          { "$ref": "#/components/parameters/orderby" },
+          { "$ref": "#/components/parameters/skiptoken" }
+        ],
+        "responses": {
+          "200": {
+            "description": "List of contacts",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "d": {
+                      "type": "object",
+                      "properties": {
+                        "results": {
+                          "type": "array",
+                          "items": { "$ref": "#/components/schemas/Contact" }
+                        },
+                        "__next": {
+                          "type": "string",
+                          "description": "URL for next result page (replace server path as described)"
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": { "$ref": "#/components/responses/BadRequest" },
+          "500": { "$ref": "#/components/responses/InternalServerError" }
+        }
+      },
+      "post": {
+        "tags": ["Visitor Data"],
+        "summary": "Create a new visitor contact",
+        "description": "Inserts a new empty contact. You must insert an empty contact first before inserting barcode or business card data related to that contact. The server will fill additional columns automatically. Remember the returned `ContactID` for subsequent operations.",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": { "$ref": "#/components/schemas/ContactInput" }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Contact created successfully. Returns the new contact record including the generated ContactID.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "d": { "$ref": "#/components/schemas/Contact" }
+                  }
+                }
+              }
+            }
+          },
+          "400": { "$ref": "#/components/responses/BadRequest" },
+          "500": { "$ref": "#/components/responses/InternalServerError" }
+        }
+      }
+    },
+    "/LSA_Contact({ContactID})": {
+      "get": {
+        "tags": ["Visitor Data"],
+        "summary": "Get a single visitor contact by ID",
+        "parameters": [
+          {
+            "name": "ContactID",
+            "in": "path",
+            "required": true,
+            "schema": { "type": "integer" }
+          },
+          { "$ref": "#/components/parameters/format" }
+        ],
+        "responses": {
+          "200": {
+            "description": "Single contact record",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "d": { "$ref": "#/components/schemas/Contact" }
+                  }
+                }
+              }
+            }
+          },
+          "404": { "$ref": "#/components/responses/NotFound" },
+          "500": { "$ref": "#/components/responses/InternalServerError" }
+        }
+      },
+      "put": {
+        "tags": ["Visitor Data"],
+        "summary": "Update a visitor contact",
+        "parameters": [
+          {
+            "name": "ContactID",
+            "in": "path",
+            "required": true,
+            "schema": { "type": "integer" }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": { "$ref": "#/components/schemas/ContactInput" }
+            }
+          }
+        },
+        "responses": {
+          "200": { "description": "Contact updated successfully" },
+          "400": { "$ref": "#/components/responses/BadRequest" },
+          "404": { "$ref": "#/components/responses/NotFound" },
+          "500": { "$ref": "#/components/responses/InternalServerError" }
+        }
+      },
+      "delete": {
+        "tags": ["Visitor Data"],
+        "summary": "Delete a visitor contact",
+        "parameters": [
+          {
+            "name": "ContactID",
+            "in": "path",
+            "required": true,
+            "schema": { "type": "integer" }
+          }
+        ],
+        "responses": {
+          "200": { "description": "Contact deleted successfully" },
+          "404": { "$ref": "#/components/responses/NotFound" },
+          "500": { "$ref": "#/components/responses/InternalServerError" }
+        }
+      }
+    },
+    "/LSA_ImportBarcodeScan": {
+      "post": {
+        "tags": ["Visitor Data"],
+        "summary": "Submit 1D barcode for contact data recognition",
+        "description": "Insert a new entry to recognize contact data from a 1-dimensional barcode. Requires an existing contact to be inserted first (via `LSA_Contact`). Then call `PRC_GetRecognizedContact` to retrieve the processed data.",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": { "$ref": "#/components/schemas/ImportBarcodeScanInput" }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Barcode scan record created",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "d": {
+                      "type": "object",
+                      "properties": {
+                        "ImportBarcodeScanID": { "type": "integer" }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": { "$ref": "#/components/responses/BadRequest" },
+          "500": { "$ref": "#/components/responses/InternalServerError" }
+        }
+      }
+    },
+    "/LSA_ImportCardscan": {
+      "post": {
+        "tags": ["Visitor Data"],
+        "summary": "Submit business card or 2D/QR code for recognition",
+        "description": "Insert a new entry to recognize contact data from a business card image or scanned 2D/QR code. For business card images, also insert the image into `LSA_DOC1ImportCardscan` using the returned `ImportCardscanID`. Then call `PRC_GetRecognizedContact`.",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": { "$ref": "#/components/schemas/ImportCardscanInput" }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Card scan record created",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "d": {
+                      "type": "object",
+                      "properties": {
+                        "ImportCardscanID": { "type": "integer", "description": "Use as PK for DOC1ImportCardscan" }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": { "$ref": "#/components/responses/BadRequest" },
+          "500": { "$ref": "#/components/responses/InternalServerError" }
+        }
+      }
+    },
+    "/LSA_DOC1ImportCardscan": {
+      "post": {
+        "tags": ["Visitor Data"],
+        "summary": "Upload business card image for OCR recognition",
+        "description": "Insert base64 encoded business card image data linked to a previously created `ImportCardscan` record.",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": { "$ref": "#/components/schemas/ImageDocumentInput" }
+            }
+          }
+        },
+        "responses": {
+          "201": { "description": "Business card image uploaded successfully" },
+          "400": { "$ref": "#/components/responses/BadRequest" },
+          "500": { "$ref": "#/components/responses/InternalServerError" }
+        }
+      }
+    },
+    "/LSA_ContactNote": {
+      "get": {
+        "tags": ["Visitor Data"],
+        "summary": "List notes for a contact",
+        "description": "Returns notes (images, SVG sketches, audio) attached to visitor contacts. Filter by ContactID.",
+        "parameters": [
+          { "$ref": "#/components/parameters/format" },
+          { "$ref": "#/components/parameters/filter" },
+          { "$ref": "#/components/parameters/orderby" },
+          { "$ref": "#/components/parameters/skiptoken" }
+        ],
+        "responses": {
+          "200": {
+            "description": "List of contact notes",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ODataListResponse" }
+              }
+            }
+          },
+          "400": { "$ref": "#/components/responses/BadRequest" },
+          "500": { "$ref": "#/components/responses/InternalServerError" }
+        }
+      },
+      "post": {
+        "tags": ["Visitor Data"],
+        "summary": "Create a note for a contact",
+        "description": "Insert a note (image, SVG sketch or audio) linked to an existing contact. Contact must be created first.",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": { "$ref": "#/components/schemas/ContactNoteInput" }
+            }
+          }
+        },
+        "responses": {
+          "201": { "description": "Note created successfully" },
+          "400": { "$ref": "#/components/responses/BadRequest" },
+          "500": { "$ref": "#/components/responses/InternalServerError" }
+        }
+      }
+    },
+    "/LSA_ContactNote({ContactNoteID})": {
+      "put": {
+        "tags": ["Visitor Data"],
+        "summary": "Update a contact note",
+        "parameters": [
+          {
+            "name": "ContactNoteID",
+            "in": "path",
+            "required": true,
+            "schema": { "type": "integer" }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": { "$ref": "#/components/schemas/ContactNoteInput" }
+            }
+          }
+        },
+        "responses": {
+          "200": { "description": "Note updated successfully" },
+          "400": { "$ref": "#/components/responses/BadRequest" },
+          "404": { "$ref": "#/components/responses/NotFound" },
+          "500": { "$ref": "#/components/responses/InternalServerError" }
+        }
+      },
+      "delete": {
+        "tags": ["Visitor Data"],
+        "summary": "Delete a contact note",
+        "parameters": [
+          {
+            "name": "ContactNoteID",
+            "in": "path",
+            "required": true,
+            "schema": { "type": "integer" }
+          }
+        ],
+        "responses": {
+          "200": { "description": "Note deleted successfully" },
+          "404": { "$ref": "#/components/responses/NotFound" },
+          "500": { "$ref": "#/components/responses/InternalServerError" }
+        }
+      }
+    },
+    "/LSA_LineAnswer({LineAnswerID})": {
+      "put": {
+        "tags": ["Questionnaire"],
+        "summary": "Update a questionnaire answer",
+        "description": "Updates answers for one questionnaire question row. Retrieve the `LineAnswerID` from `LSA_LineAnswerData` first. A contact must exist before questionnaire rows can be updated.",
+        "parameters": [
+          {
+            "name": "LineAnswerID",
+            "in": "path",
+            "required": true,
+            "description": "Primary key (1:1 reference to LineAnswerDataID)",
+            "schema": { "type": "integer" }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": { "$ref": "#/components/schemas/LineAnswerInput" }
+            }
+          }
+        },
+        "responses": {
+          "200": { "description": "Answer updated successfully" },
+          "400": { "$ref": "#/components/responses/BadRequest" },
+          "404": { "$ref": "#/components/responses/NotFound" },
+          "500": { "$ref": "#/components/responses/InternalServerError" }
+        }
+      }
+    },
+    "/LSA_DOC1LineAnswer": {
+      "post": {
+        "tags": ["Questionnaire"],
+        "summary": "Add image to a questionnaire answer",
+        "description": "Insert image data related to a questionnaire answer.",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": { "$ref": "#/components/schemas/ImageDocumentInput" }
+            }
+          }
+        },
+        "responses": {
+          "201": { "description": "Image added to questionnaire answer" },
+          "400": { "$ref": "#/components/responses/BadRequest" },
+          "500": { "$ref": "#/components/responses/InternalServerError" }
+        }
+      }
+    },
+    "/LSA_ContactReport": {
+      "get": {
+        "tags": ["CRM Export"],
+        "summary": "Get collected visitor contacts with questionnaire answers",
+        "description": "Returns all collected visitor contact data including answers to the questionnaire (up to 60 questions). Use `RecordDate` or `ModificationDate` filters for incremental CRM sync. Max 100 rows per request.\n\n**Pagination:** Use `$skiptoken` for next pages.\n\n**Incremental sync example:** `$filter=(RecordDate ge cast('2024-06-01T07:00:00Z','Edm.DateTime'))`\n\n**Note:** ContactID is only unique within one specific Event if not using permanent LeadSuccess licensing.",
+        "parameters": [
+          { "$ref": "#/components/parameters/format" },
+          { "$ref": "#/components/parameters/filter" },
+          { "$ref": "#/components/parameters/orderby" },
+          { "$ref": "#/components/parameters/skiptoken" }
+        ],
+        "responses": {
+          "200": {
+            "description": "List of contact report rows",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "d": {
+                      "type": "object",
+                      "properties": {
+                        "results": {
+                          "type": "array",
+                          "items": { "$ref": "#/components/schemas/ContactReport" }
+                        },
+                        "__next": { "type": "string" }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": { "$ref": "#/components/responses/BadRequest" },
+          "500": { "$ref": "#/components/responses/InternalServerError" }
+        }
+      }
+    },
+    "/LSA_ContactPdfExport": {
+      "get": {
+        "tags": ["CRM Export"],
+        "summary": "Get lead report as PDF (base64)",
+        "description": "Returns lead report summaries in PDF format (base64 encoded) per contact, including contact data, questionnaire answers, sketches and photos.",
+        "parameters": [
+          { "$ref": "#/components/parameters/format" },
+          { "$ref": "#/components/parameters/filter" },
+          { "$ref": "#/components/parameters/orderby" },
+          { "$ref": "#/components/parameters/skiptoken" }
+        ],
+        "responses": {
+          "200": {
+            "description": "List of PDF export records with base64 encoded PDF data",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ODataListResponse" }
+              }
+            }
+          },
+          "400": { "$ref": "#/components/responses/BadRequest" },
+          "500": { "$ref": "#/components/responses/InternalServerError" }
+        }
+      }
+    },
+    "/PRC_GetRecognizedContact": {
+      "get": {
+        "tags": ["Procedures"],
+        "summary": "Get recognized contact data from barcode or business card",
+        "description": "Call this procedure to retrieve updated contact data extracted from a previously inserted barcode or business card image. You must first insert data into `LSA_Contact` AND (`LSA_ImportBarcodeScan` OR `LSA_ImportCardscan` optionally with `LSA_DOC1ImportCardscan`). The procedure waits up to the specified timeout for server-side processing. If no data is returned within timeout, poll `LSA_Contact` later.",
+        "parameters": [
+          {
+            "name": "p_ContactID",
+            "in": "query",
+            "required": true,
+            "description": "ContactID of the contact to retrieve recognized data for",
+            "schema": { "type": "integer" }
+          },
+          {
+            "name": "p_TimeoutSec",
+            "in": "query",
+            "required": true,
+            "description": "Maximum wait time in seconds (max 59)",
+            "schema": { "type": "integer", "maximum": 59, "minimum": 1 }
+          },
+          { "$ref": "#/components/parameters/format" }
+        ],
+        "responses": {
+          "200": {
+            "description": "Recognized contact data (same structure as single contact GET), or empty if not yet processed within timeout",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "d": { "$ref": "#/components/schemas/Contact" }
+                  }
+                }
+              }
+            }
+          },
+          "400": { "$ref": "#/components/responses/BadRequest" },
+          "404": { "$ref": "#/components/responses/NotFound" },
+          "500": { "$ref": "#/components/responses/InternalServerError" }
+        }
+      }
+    },
+    "/PRC_GetContactFromBarcode": {
+      "get": {
+        "tags": ["Procedures"],
+        "summary": "Create and recognize contact from barcode (shortcut)",
+        "description": "Shortcut procedure that creates a new contact and recognizes data from a 1D barcode or extracted barcode ID from a 2D/QR code (e.g. VCARD field X-REFCODE) in a single call. Unlike `PRC_GetRecognizedContact`, you do NOT need to pre-insert `LSA_Contact` and `LSA_ImportBarcodeScan`. Trade-off: you cannot add additional contact data before this procedure returns.",
+        "parameters": [
+          {
+            "name": "p_EmployeeID",
+            "in": "query",
+            "required": true,
+            "description": "EmployeeID of the contact owner (from LSA_Employee)",
+            "schema": { "type": "integer" }
+          },
+          {
+            "name": "p_Request_Barcode",
+            "in": "query",
+            "required": true,
+            "description": "Barcode data or extracted 2D/QR-code text from field X-REFCODE (max 1000 chars)",
+            "schema": { "type": "string", "maxLength": 1000 }
+          },
+          {
+            "name": "p_TimeoutSec",
+            "in": "query",
+            "required": true,
+            "description": "Maximum wait time in seconds (max 59)",
+            "schema": { "type": "integer", "maximum": 59, "minimum": 1 }
+          },
+          {
+            "name": "p_EventID",
+            "in": "query",
+            "required": true,
+            "description": "EventID of the current event (from LSA_LOADEvent)",
+            "schema": { "type": "integer" }
+          },
+          {
+            "name": "p_HostName",
+            "in": "query",
+            "required": false,
+            "description": "Unique identifier of your device (internal use to distinguish devices)",
+            "schema": { "type": "string", "maxLength": 255 }
+          },
+          {
+            "name": "p_Incomplete",
+            "in": "query",
+            "required": false,
+            "description": "Set to 1 if contact has not yet been reviewed in back-office",
+            "schema": { "type": "integer", "enum": [0, 1] }
+          },
+          { "$ref": "#/components/parameters/format" }
+        ],
+        "responses": {
+          "200": {
+            "description": "Recognized contact data, or empty if not processed within timeout (poll LSA_Contact later)",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "d": { "$ref": "#/components/schemas/Contact" }
+                  }
+                }
+              }
+            }
+          },
+          "400": { "$ref": "#/components/responses/BadRequest" },
+          "500": { "$ref": "#/components/responses/InternalServerError" }
+        }
+      }
+    }
+  },
+  "components": {
+    "securitySchemes": {
+      "basicAuth": {
+        "type": "http",
+        "scheme": "basic",
+        "description": "HTTPS Basic Authentication. Credentials must be sent with every request."
+      }
+    },
+    "parameters": {
+      "format": {
+        "name": "$format",
+        "in": "query",
+        "required": false,
+        "description": "Response format. Use `json` for JSON output; otherwise XML is returned.",
+        "schema": { "type": "string", "enum": ["json", "xml"], "default": "json" }
+      },
+      "filter": {
+        "name": "$filter",
+        "in": "query",
+        "required": false,
+        "description": "OData filter expression (case-sensitive). Example: `$filter=(LanguageSpecID eq 1)`",
+        "schema": { "type": "string" }
+      },
+      "orderby": {
+        "name": "$orderby",
+        "in": "query",
+        "required": false,
+        "description": "OData orderby expression. Example: `$orderby=(SortIndex)`",
+        "schema": { "type": "string" }
+      },
+      "skiptoken": {
+        "name": "$skiptoken",
+        "in": "query",
+        "required": false,
+        "description": "Primary key value of the last fetched row to retrieve the next page of results (max 100 rows per page). Use the `__next` URL from the previous response.",
+        "schema": { "type": "integer" }
+      }
+    },
+    "schemas": {
+      "ODataListResponse": {
+        "type": "object",
+        "properties": {
+          "d": {
+            "type": "object",
+            "properties": {
+              "results": {
+                "type": "array",
+                "items": { "type": "object" }
+              },
+              "__next": {
+                "type": "string",
+                "description": "URL to fetch next page. Replace server path prefix as documented."
+              }
+            }
+          }
+        }
+      },
+      "LOADEvent": {
+        "type": "object",
+        "properties": {
+          "LOADEventID": { "type": "integer", "description": "Primary key / EventID for foreign key references" },
+          "EventName": { "type": "string", "description": "Display name of the event" },
+          "Startdate": { "type": "string", "format": "date-time", "description": "Event start date (UTC)" },
+          "Enddate": { "type": "string", "format": "date-time", "description": "Event end date (UTC)" },
+          "EventTitle": { "type": "string" },
+          "Subtitle": { "type": "string" },
+          "EventText_1": { "type": "string" },
+          "EventText_2": { "type": "string" },
+          "EventText_3": { "type": "string" },
+          "ExtRef": { "type": "string", "description": "External reference" },
+          "CompanyName": { "type": "string", "description": "Exhibitor company name" },
+          "Street": { "type": "string", "description": "Exhibitor street address" },
+          "ZIP": { "type": "string", "description": "Exhibitor postal code" },
+          "City": { "type": "string", "description": "Exhibitor city" },
+          "INITCountryID": { "type": "integer", "description": "Exhibitor country reference" },
+          "Website": { "type": "string", "description": "Exhibitor website" },
+          "PrivacyPolicyText": { "type": "string", "description": "Privacy policy text of exhibitor" },
+          "PrivacyPolicySVG": { "type": "string", "description": "Privacy policy in SVG format" }
+        }
+      },
+      "Employee": {
+        "type": "object",
+        "properties": {
+          "EmployeeID": { "type": "integer", "description": "Primary key, use as FK for user-related references" },
+          "LoginName": { "type": "string", "maxLength": 255 },
+          "EmployeeName": { "type": "string", "description": "Display name of the user" },
+          "EventID": { "type": "integer", "description": "Current event reference" },
+          "SentContactCount": { "type": "integer", "description": "Number of contacts sent to server" },
+          "Present": { "type": "integer", "enum": [0, 1], "description": "1 if present on site" },
+          "CurrentTS": { "type": "string", "format": "date-time", "description": "Current server timestamp (UTC)" },
+          "NewNoteCount": { "type": "integer", "description": "Number of new messages from info desk" }
+        }
+      },
+      "Contact": {
+        "type": "object",
+        "properties": {
+          "ContactID": { "type": "integer", "description": "Primary key" },
+          "ContactTitle": { "type": "string", "maxLength": 80 },
+          "FirstName": { "type": "string", "maxLength": 256 },
+          "Middlename": { "type": "string", "maxLength": 64 },
+          "LastName": { "type": "string", "maxLength": 128 },
+          "Position": { "type": "string", "maxLength": 80, "description": "Position at work" },
+          "CompanyName": { "type": "string", "maxLength": 1024 },
+          "Street": { "type": "string", "maxLength": 128 },
+          "POBox": { "type": "string", "maxLength": 32 },
+          "POBoxZIP": { "type": "string", "maxLength": 12 },
+          "ZIP": { "type": "string", "maxLength": 12 },
+          "City": { "type": "string", "maxLength": 128 },
+          "State": { "type": "string", "maxLength": 128 },
+          "INITCountryID": { "type": "integer", "description": "FK to country" },
+          "Phone": { "type": "string", "maxLength": 64 },
+          "Mobile": { "type": "string", "maxLength": 64 },
+          "Fax": { "type": "string", "maxLength": 64 },
+          "Email": { "type": "string", "maxLength": 500 },
+          "Website": { "type": "string", "maxLength": 500 },
+          "EmployeeID": { "type": "integer", "description": "FK to owner employee" },
+          "CreateDate": { "type": "string", "format": "date-time" },
+          "Comment": { "type": "string", "maxLength": 4000 },
+          "INITAddressID": { "type": "integer", "description": "FK for form-of-address" },
+          "Incomplete": { "type": "integer", "enum": [0, 1], "description": "1 if not yet reviewed in back-office" },
+          "EventID": { "type": "integer", "description": "FK to current event" },
+          "DepartmentText": { "type": "string", "maxLength": 4000 },
+          "Sector": { "type": "string", "maxLength": 4000 },
+          "HostName": { "type": "string", "maxLength": 255, "description": "Unique device identifier" },
+          "Freetext1": { "type": "string", "maxLength": 255 },
+          "Freetext2": { "type": "string", "maxLength": 255 },
+          "Freetext3": { "type": "string", "maxLength": 255 },
+          "Freetext4": { "type": "string", "maxLength": 255 },
+          "Freetext5": { "type": "string", "maxLength": 255 },
+          "Freetext6": { "type": "string", "maxLength": 255 }
+        }
+      },
+      "ContactInput": {
+        "type": "object",
+        "description": "Fields for creating or updating a contact. Omit ContactID on insert.",
+        "properties": {
+          "ContactTitle": { "type": "string", "maxLength": 80 },
+          "FirstName": { "type": "string", "maxLength": 256 },
+          "Middlename": { "type": "string", "maxLength": 64 },
+          "LastName": { "type": "string", "maxLength": 128 },
+          "Position": { "type": "string", "maxLength": 80 },
+          "CompanyName": { "type": "string", "maxLength": 1024 },
+          "Street": { "type": "string", "maxLength": 128 },
+          "POBox": { "type": "string", "maxLength": 32 },
+          "POBoxZIP": { "type": "string", "maxLength": 12 },
+          "ZIP": { "type": "string", "maxLength": 12 },
+          "City": { "type": "string", "maxLength": 128 },
+          "State": { "type": "string", "maxLength": 128 },
+          "INITCountryID": { "type": "integer" },
+          "Phone": { "type": "string", "maxLength": 64 },
+          "Mobile": { "type": "string", "maxLength": 64 },
+          "Fax": { "type": "string", "maxLength": 64 },
+          "Email": { "type": "string", "maxLength": 500 },
+          "Website": { "type": "string", "maxLength": 500 },
+          "EmployeeID": { "type": "integer" },
+          "Comment": { "type": "string", "maxLength": 4000 },
+          "INITAddressID": { "type": "integer" },
+          "Incomplete": { "type": "integer", "enum": [0, 1] },
+          "EventID": { "type": "integer" },
+          "DepartmentText": { "type": "string", "maxLength": 4000 },
+          "Sector": { "type": "string", "maxLength": 4000 },
+          "HostName": { "type": "string", "maxLength": 255 },
+          "Freetext1": { "type": "string", "maxLength": 255 },
+          "Freetext2": { "type": "string", "maxLength": 255 },
+          "Freetext3": { "type": "string", "maxLength": 255 },
+          "Freetext4": { "type": "string", "maxLength": 255 },
+          "Freetext5": { "type": "string", "maxLength": 255 },
+          "Freetext6": { "type": "string", "maxLength": 255 }
+        }
+      },
+      "ImportBarcodeScanInput": {
+        "type": "object",
+        "required": ["Request_Barcode", "ContactID"],
+        "properties": {
+          "Request_Barcode": { "type": "string", "maxLength": 32, "description": "1D barcode data" },
+          "ContactID": { "type": "integer", "description": "FK to existing contact" }
+        }
+      },
+      "ImportCardscanInput": {
+        "type": "object",
+        "required": ["Button", "ContactID"],
+        "properties": {
+          "Button": {
+            "type": "string",
+            "enum": ["OCR_TODO", "VCARD_TODO"],
+            "description": "'OCR_TODO' for business card image, 'VCARD_TODO' for 2D/QR code"
+          },
+          "Barcode2": {
+            "type": "string",
+            "description": "Data content of 2D/QR code (required if Button is VCARD_TODO)"
+          },
+          "ContactID": { "type": "integer", "description": "FK to existing contact" }
+        }
+      },
+      "UserInfoInput": {
+        "type": "object",
+        "properties": {
+          "Lastname": { "type": "string", "maxLength": 255 },
+          "Firstname": { "type": "string", "maxLength": 64 },
+          "UserTitle": { "type": "string", "maxLength": 80 },
+          "Position": { "type": "string", "maxLength": 80 },
+          "Telefon": { "type": "string", "maxLength": 64 },
+          "TelefonMobile": { "type": "string", "maxLength": 64 },
+          "Email": { "type": "string", "maxLength": 500 },
+          "Present": { "type": "integer", "enum": [0, 1] },
+          "INITUserPresenceID": { "type": "integer" },
+          "Info1": { "type": "string", "maxLength": 255, "description": "User message text" },
+          "Info1TSRead": { "type": "string", "format": "date-time" },
+          "Info2TSRead": { "type": "string", "format": "date-time" }
+        }
+      },
+      "LineAnswerInput": {
+        "type": "object",
+        "properties": {
+          "ContactID": { "type": "integer" },
+          "SSAnswer": { "type": "string", "maxLength": 2, "description": "Single selection answer value" },
+          "MSAnswer01": { "type": "string", "maxLength": 1, "description": "'X' if selected" },
+          "MSAnswer02": { "type": "string", "maxLength": 1 },
+          "MSAnswer03": { "type": "string", "maxLength": 1 },
+          "MSAnswer04": { "type": "string", "maxLength": 1 },
+          "MSAnswer05": { "type": "string", "maxLength": 1 },
+          "FreeText": { "type": "string", "maxLength": 1000 },
+          "MRAnswer01": { "type": "string", "maxLength": 1, "description": "Multi rating answer, 'X' if selected" },
+          "MRAnswer02": { "type": "string", "maxLength": 1 },
+          "MRAnswer03": { "type": "string", "maxLength": 1 },
+          "RRAnswer": { "type": "string", "maxLength": 2, "description": "Single rating answer value" }
+        }
+      },
+      "ContactNoteInput": {
+        "type": "object",
+        "required": ["ContactID", "ExecAppTypeID", "SourceCode", "DocGroup"],
+        "properties": {
+          "NoteTitel": { "type": "string", "maxLength": 255 },
+          "ContactID": { "type": "integer" },
+          "ExecAppTypeID": {
+            "type": "integer",
+            "enum": [3, 15, 16],
+            "description": "3 = image, 15 = SVG sketch, 16 = audio"
+          },
+          "SourceCode": {
+            "type": "string",
+            "description": "Base64 encoded image, audio, or SVG text source"
+          },
+          "DocGroup": {
+            "type": "integer",
+            "enum": [1, 3, 6],
+            "description": "1 = image, 3 = SVG sketch, 6 = audio"
+          },
+          "DocFormat": { "type": "integer", "description": "Format code (see documentation for lookup table)" },
+          "OvwSourceCode": { "type": "string", "description": "Optional base64 thumbnail image" },
+          "PrvSourceCode": { "type": "string", "description": "Optional base64 preview image" },
+          "Width": { "type": "integer", "description": "Image width in pixels" },
+          "Height": { "type": "integer", "description": "Image height in pixels" },
+          "Length": { "type": "integer", "description": "Audio length in milliseconds" },
+          "OvwEdge": { "type": "integer", "description": "Max thumbnail edge size" },
+          "ColorType": { "type": "integer", "description": "11 for image data" }
+        }
+      },
+      "ImageDocumentInput": {
+        "type": "object",
+        "description": "Base64 encoded image document (used for profile images, business card scans, questionnaire images)",
+        "properties": {
+          "wFormat": { "type": "integer", "default": 3 },
+          "ColorType": { "type": "integer", "default": 11 },
+          "ulWidth": { "type": "integer", "description": "Image width in pixels" },
+          "ulHeight": { "type": "integer", "description": "Image height in pixels" },
+          "ulDpm": { "type": "integer", "description": "Resolution in dots per meter" },
+          "szOriFileNameDOC1": { "type": "string", "maxLength": 255, "description": "Original filename" },
+          "ulOvwEdge": { "type": "integer", "description": "Max thumbnail edge size" },
+          "ulPrevEdge": { "type": "integer", "description": "Max preview edge size" },
+          "DocContentDOCCNT1": { "type": "string", "description": "Base64 encoded full image data" },
+          "PrevContentDOCCNT2": { "type": "string", "description": "Base64 encoded preview image" },
+          "OvwContentDOCCNT3": { "type": "string", "description": "Base64 encoded thumbnail image" },
+          "ContentEncoding": { "type": "integer", "default": 4096 }
+        }
+      },
+      "ContactReport": {
+        "type": "object",
+        "description": "CRM export view with contact data and questionnaire answers",
+        "properties": {
+          "ContactReportID": { "type": "integer", "description": "-2 = header row, -1 = group row, >0 = contact data row" },
+          "ContactID": { "type": "string", "maxLength": 32 },
+          "Address": { "type": "string", "maxLength": 32 },
+          "Title": { "type": "string", "maxLength": 80 },
+          "FirstName": { "type": "string", "maxLength": 256 },
+          "MidleName": { "type": "string", "maxLength": 256 },
+          "LastName": { "type": "string", "maxLength": 128 },
+          "Position": { "type": "string", "maxLength": 80 },
+          "Division": { "type": "string", "maxLength": 4000 },
+          "CompanyName": { "type": "string", "maxLength": 1024 },
+          "Sector": { "type": "string", "maxLength": 4000 },
+          "Street": { "type": "string", "maxLength": 128 },
+          "POBox": { "type": "string", "maxLength": 32 },
+          "POBox_Zip": { "type": "string", "maxLength": 12 },
+          "ZIP": { "type": "string", "maxLength": 12 },
+          "City": { "type": "string", "maxLength": 128 },
+          "State": { "type": "string", "maxLength": 128 },
+          "Country": { "type": "string", "maxLength": 255 },
+          "Phone": { "type": "string", "maxLength": 64 },
+          "Mobile": { "type": "string", "maxLength": 64 },
+          "Fax": { "type": "string", "maxLength": 64 },
+          "Email": { "type": "string", "maxLength": 500 },
+          "Website": { "type": "string", "maxLength": 500 },
+          "Memo": { "type": "string", "maxLength": 4000 },
+          "RecordedBy": { "type": "string", "maxLength": 194 },
+          "RecordDate": { "type": "string", "maxLength": 32 },
+          "Remarks": { "type": "string", "maxLength": 4000 },
+          "EntryComplete": { "type": "string", "maxLength": 32 },
+          "Event": { "type": "string", "maxLength": 127 },
+          "Question01": { "type": "string", "maxLength": 2000, "description": "Answer to Question 1 (up to Question60)" },
+          "Question60": { "type": "string", "maxLength": 2000, "description": "Answer to Question 60" },
+          "RequestBarcode": { "type": "string", "maxLength": 32 },
+          "ModificationDate": { "type": "string", "maxLength": 32 },
+          "QuestionnairScans": { "type": "string", "maxLength": 32 },
+          "Sketches": { "type": "string", "maxLength": 32 }
+        }
+      },
+      "ErrorResponse": {
+        "type": "object",
+        "properties": {
+          "error": {
+            "type": "object",
+            "properties": {
+              "code": { "type": "string", "description": "HTTP-based error code (e.g. '400', '404', '500')" },
+              "message": { "type": "string", "description": "Developer-oriented error description. Save to log file; do not display to end users." }
+            }
+          }
+        }
+      }
+    },
+    "responses": {
+      "BadRequest": {
+        "description": "400 Bad Request – Incorrect or missing parameters",
+        "content": {
+          "application/json": {
+            "schema": { "$ref": "#/components/schemas/ErrorResponse" }
+          }
+        }
+      },
+      "NotFound": {
+        "description": "404 Not Found – No matching record found",
+        "content": {
+          "application/json": {
+            "schema": { "$ref": "#/components/schemas/ErrorResponse" }
+          }
+        }
+      },
+      "InternalServerError": {
+        "description": "500 Internal Server Error – Server-side problem. Contact a LeadSuccess administrator with the plain text error message.",
+        "content": {
+          "application/json": {
+            "schema": { "$ref": "#/components/schemas/ErrorResponse" }
+          }
+        }
+      }
+    }
+  }
+}
